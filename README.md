@@ -1,4 +1,4 @@
-# # Leitor de sistema de arquivos FAT16
+# Leitor de sistema de arquivos FAT16
 
 ### Trabalho de Sistemas Operacionais
 >Colaborador: *Gabriel Mazzuco* ([Github Profile](https://github.com/gabrielmazz))
