@@ -14,8 +14,8 @@ int main(void){
 	memset(&file, 0, sizeof(file));
 
 	//Opções de arquivos na aba de menu
-	int opcao;
 	char file_name[35];
+	int opcao;
 
 	clear_terminal();
 
@@ -23,7 +23,13 @@ int main(void){
 	printf("Determine o arquivo que deseja ler: \n");
 	printf("1 - fat16_1sectorpercluster.img \n");
 	printf("2 - fat16_4sectorpercluster.img \n");
-	printf("Escolha: "); scanf("%d", &opcao);
+	printf("Escolha: "); 
+	scanf("%d", &opcao);
+
+	if (opcao != 1 && opcao != 2) {
+		printf("Opção inválida\n");
+		EXIT_SUCCESS;
+	}
 
 	switch(opcao){
 		case 1:
@@ -46,8 +52,11 @@ int main(void){
 	//Move o ponteiro para o inicio do arquivo no byte 0
     fseek(fp, 0, SEEK_SET);
 
-	//Registro de leitura do arquivo fat
-    fread(&boot_record, sizeof(fat_BS_t),1, fp);
+	size_t read_elements = fread(&boot_record, sizeof(fat_BS_t), 1, fp);
+	if (read_elements != 1) {
+		printf("Erro na leitura do arquivo\n");
+		exit(EXIT_FAILURE);
+	}
 
 	printf("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n");
 
@@ -83,14 +92,9 @@ int main(void){
 	//Variável para percorrer o diretório raiz e seus arquivos
 	unsigned int highlighter = root_dir_size;
 	unsigned int highlighter_type;
-	unsigned int highlighter_arq;
 
 	//Variável para descobrir aonde esta o arquivo
 	unsigned int file_start;
-	unsigned char *vet;
-
-	//Auxiliar para transformar o caracter de ASCII para letra
-	int aux_char;
 
 	//Contador de arquivos
 	int cont = 1;
