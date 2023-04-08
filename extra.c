@@ -28,8 +28,8 @@ char byte_to_char(unsigned char byte){
 // Função para pegar o nome do arquivo
 void get_file_name(FILE* fp, fat16_file* file, unsigned int highlighter) {
     int aux_char;
+    fseek(fp, highlighter, SEEK_SET);
     for(int i = 0; i < 8; i++) {
-        fseek(fp, highlighter + i, SEEK_SET);
         aux_char = fgetc(fp);
         file->name[i] = byte_to_char(aux_char);
     }
@@ -38,8 +38,8 @@ void get_file_name(FILE* fp, fat16_file* file, unsigned int highlighter) {
 // Função para pegar a extensão do arquivo
 void get_file_extension(FILE* fp, fat16_file* file, unsigned int highlighter) {
     int aux_char;
+    fseek(fp, highlighter + 8, SEEK_SET);
     for(int i = 0; i < 3; i++) {
-        fseek(fp, highlighter + 8 + i, SEEK_SET);
         aux_char = fgetc(fp);
         file->extension[i] = byte_to_char(aux_char);
     }
@@ -55,25 +55,35 @@ void get_file_first_cluster(FILE* fp, fat16_file* file, unsigned int highlighter
 // Função para pegar o tamanho do arquivo
 void get_file_size(FILE* fp, fat16_file* file, unsigned int highlighter) {
     fseek(fp, highlighter + 28, SEEK_SET);
-    file->size = fgetc(fp);
+    fread(&file->size, 4, 1, fp);
 }
 
 // Função para imprimir as informações do arquivo
 void print_file_info(fat16_file file, unsigned int highlighter_type) {
-    printf("Nome: %s\n", file.name);
-    printf("Extensão: %s\n", file.extension);
+    printf("Nome: ");
+    for(int i = 0; i < 8; i++) {
+        if(file.name[i] != ' ')
+            printf("%c", file.name[i]);
+    }
+
+    printf("\nExtensão: ");
+    for(int i = 0; i < 3; i++) {
+        if(file.extension[i] != ' ')
+            printf("%c", file.extension[i]);
+    }
     
     if(highlighter_type == 32)
-        printf("Tipo: Arquivo\n");
+        printf("\nTipo: Arquivo\n");
     else if(highlighter_type == 16)
-        printf("Tipo: Diretório\n");
+        printf("\nTipo: Diretório\n");
 
     printf("Primeiro cluster: %ld (0x%lx) com valor %d\n", file.first_cluster, file.first_cluster, file.first_cluster_b);
-    printf("Tamanho: %d\n bytes", file.size);
+    printf("Tamanho: %d bytes\n", file.size);
 }
 
 // Função para imprimir o conteúdo do arquivo
-void print_file_content(FILE *fp, unsigned int file_start, int size) {
+void print_file_content(FILE *fp, unsigned int file_start, long int size){
+
     unsigned int file_search = 0;
     unsigned char* vet = malloc(sizeof(unsigned char) * size);
     int j = 0;

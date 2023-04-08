@@ -29,7 +29,7 @@ typedef struct arquivos{
 	unsigned char type[10];
 	unsigned long int first_cluster;
 	unsigned int first_cluster_b;
-	unsigned int size;
+	unsigned long int size;
 }fat16_file;
 
 //Função extras
@@ -46,4 +46,4 @@ void get_file_size(FILE* fp, fat16_file* file, unsigned int highlighter);
 
 //Funções para printar todos as arquivos
 void print_file_info(fat16_file file, unsigned int highlighter_type);
-void print_file_content(FILE *fp, unsigned int file_start, int size);
+void print_file_content(FILE *fp, unsigned int file_start, long int size);
