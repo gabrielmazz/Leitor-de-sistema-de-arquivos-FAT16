@@ -1,8 +1,11 @@
 # Leitor de sistema de arquivos FAT16
 
 ### Trabalho de Sistemas Operacionais
->Colaborador: *Gabriel Mazzuco* ([Github Profile](https://github.com/gabrielmazz))
+
+> Colaborador: *Gabriel Mazzuco* ([Github Profile](https://github.com/gabrielmazz))
+
 - 3ª ano de Ciências da Computação
+
 ---
 
 ## Introdução
@@ -11,7 +14,7 @@ Este é um programa em C que lê o boot record de uma imagem de disco e imprime 
 
 ## Desenvolvimento do código
 
-O código foi desenvolvido em C e faz uso das bibliotecas padrão `stdio.h`, `stdlib.h` e `string.h`. Além disso, utiliza uma biblioteca personalizada `extra.h`, que contém algumas funções auxiliares para a leitura de informações do arquivo FAT16. Dentro da `extra.h` estão declarados as estruturas que foram usadas no programa 
+O código foi desenvolvido em C e faz uso das bibliotecas padrão `stdio.h`, `stdlib.h` e `string.h`. Além disso, utiliza uma biblioteca personalizada `extra.h`, que contém algumas funções auxiliares para a leitura de informações do arquivo FAT16. Dentro da `extra.h` estão declarados as estruturas que foram usadas no programa
 
 ```c
 typedef struct fat_BS{
@@ -48,9 +51,12 @@ O programa começa abrindo um arquivo de imagem de disco FAT16, lê o boot recor
 
 ```c
 //Calcula o inicio do Root Diretory
-    unsigned int start_rootDir = boot_record.reserved_sector_count + (boot_record.table_size_16 * boot_record.table_count);
-    unsigned int root_dir_size = start_rootDir * boot_record.bytes_per_sector;
-    unsigned int data_start = root_dir_size + (boot_record.root_entry_count * 32);
+unsigned int start_rootDir = boot_record.reserved_sector_count + (boot_record.table_size_16 * boot_record.table_count);
+unsigned int root_dir = start_rootDir * boot_record.bytes_per_sector;
+unsigned int data_start = root_dir + (boot_record.root_entry_count * 32);
+unsigned int set_reserv = boot_record.reserved_sector_count * boot_record.bytes_per_sector;
+unsigned int tam_fat = boot_record.table_size_16 * boot_record.bytes_per_sector;
+unsigned int qtd_fat[boot_record.table_count];
 ```
 
 ```c
