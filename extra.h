@@ -47,3 +47,4 @@ void get_file_size(FILE* fp, fat16_file* file, unsigned int highlighter);
 //Funções para printar todos as arquivos
 void print_file_info(fat16_file file, unsigned int highlighter_type);
 void print_file_content(FILE *fp, unsigned int file_start, long int size);
+void print_cont(int excluded, int long_file_name, int standard_83, int directory, int cont);

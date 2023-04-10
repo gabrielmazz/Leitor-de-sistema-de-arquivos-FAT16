@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "extra.h"
 
 
@@ -19,31 +20,37 @@ int main(void){
 
 	clear_terminal();
 
-	//Menu para escolher o arquivo que deseja ler
-	printf("Determine o arquivo que deseja ler: \n");
-	printf("1 - fat16_1sectorpercluster.img \n");
-	printf("2 - fat16_4sectorpercluster.img \n");
-	printf("Escolha: "); 
-	scanf("%d", &opcao);
+	do{
+		//Menu para escolher o arquivo que deseja ler
+		printf("Determine o arquivo que deseja ler: \n");
+		printf("1 - fat16_1sectorpercluster.img \n");
+		printf("2 - fat16_4sectorpercluster.img \n");
+		printf("3 - Sair\n");
+		printf("Escolha: "); 
+		scanf("%d", &opcao);
 
-	if (opcao != 1 && opcao != 2) {
-		printf("Opção inválida\n");
-		EXIT_SUCCESS;
-	}
 
-	switch(opcao){
-		case 1:
-			strcpy(file_name, "fat16_1sectorpercluster.img");
-			break;
-		
-		case 2:
-			strcpy(file_name, "fat16_4sectorpercluster.img");
-			break;
-		
-		default:
-			EXIT_SUCCESS;
-	}
+		switch(opcao){
+			case 1:
+				strcpy(file_name, "fat16_1sectorpercluster.img");
+				break;
+			
+			case 2:
+				strcpy(file_name, "fat16_4sectorpercluster.img");
+				break;
 
+			case 3:
+				clear_terminal();
+				exit(EXIT_SUCCESS);
+				break;
+			
+			default:
+				clear_terminal();
+				printf("Opção inválida, tente novamente\n\n");
+				break;
+		}
+	}while(opcao != 1 && opcao != 2);
+	
 	clear_terminal();
 
 	//Abre o arquivo escolhido
@@ -115,6 +122,8 @@ int main(void){
 
 	//Contador de arquivos
 	int cont = 1;
+	int excluded = 0, long_file_name = 0,standard_83 = 0, directory = 0;
+	bool def = false;	
 
 	//Percorre todos os arquivos do diretório raiz
 	while(1){
@@ -127,14 +136,23 @@ int main(void){
 
 		//Verifica se as entradas do diretório raiz já foram lidas
 		if(highlighter_type == 0){
-			printf("Todas as entradas da Root Diretory já foram lidas\n\n");
-			break;
+			
+			if(def == false){
+				printf("Não à entradas no Root Diretory para serem lidas\n\n");
+				break;
+
+			}else{
+				printf("Todas as entradas da Root Diretory já foram lidas\n\n");
+				print_cont(excluded, long_file_name, standard_83, directory, cont);
+				break;
+			}
 
 		}else if(highlighter_type == 229){	//Se o arquivo estiver excluido, pula para o próximo "E5"
 			printf("Arquivo %d\n", cont);
 			printf("Arquivo excluido\n\n---------------------------------------------------------------------------\n\n");
 			highlighter += 32;
 			cont++;
+			excluded++;
 
 		}else{
 			
@@ -163,6 +181,7 @@ int main(void){
 
 				//Passa o contador de arquivos
 				cont++;
+				long_file_name++;
 			}
 
 			//Verifica se é um diretório
@@ -189,6 +208,7 @@ int main(void){
 
 				//Passa o contador de arquivos
 				cont++;
+				directory++;
 
 				printf("\n---------------------------------------------------------------------------\n\n");
 				
@@ -228,12 +248,15 @@ int main(void){
 
 				//Passa o contador de arquivos
 				cont++;
+				standard_83++;
 
 				printf("\n\n---------------------------------------------------------------------------\n\n");
 
 			}
 		}
-	
+
+		def = 1;
 	}
+
     return 0;
 }

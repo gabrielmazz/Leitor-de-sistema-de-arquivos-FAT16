@@ -9,13 +9,12 @@
     #include <windows.h>
 #endif
 
+// Função apenas para limpar o terminal e deixa-lo mais organizado
 void clear_terminal() {
     #ifdef __linux__
-        system("clear");
+        __attribute__((unused)) int result = system("clear");
     #elif _WIN32
-        system("cls");
-    #else
-
+        __attribute__((unused)) int result = system("cls");
     #endif
 }
 
@@ -78,7 +77,7 @@ void print_file_info(fat16_file file, unsigned int highlighter_type) {
         printf("\nTipo: Diretório\n");
 
     printf("Primeiro cluster: %ld (0x%lx) com valor %d\n", file.first_cluster, file.first_cluster, file.first_cluster_b);
-    printf("Tamanho: %d bytes\n", file.size);
+    printf("Tamanho: %ld bytes\n", file.size);
 }
 
 // Função para imprimir o conteúdo do arquivo
@@ -102,4 +101,15 @@ void print_file_content(FILE *fp, unsigned int file_start, long int size){
         printf("%c", vet[i]);
 
     free(vet); // Libera a memória alocada para o vetor
+}
+
+// Imprime o contador de arquivos
+void print_cont(int excluded, int long_file_name, int standard_83, int directory, int cont){
+    printf("Contador de arquivos:\n\n");
+	printf("Arquivos Excluidos: %d\n", excluded);
+	printf("Diretorios: %d\n", directory);
+	printf("Arquivos Standard 8.3: %d\n", standard_83);
+	printf("Arquivos Long File Name: %d\n", long_file_name);
+	printf("Total de arquivos: %d\n\n", cont - 1);
+	printf("---------------------------------------------------------------------------\n\n");
 }
